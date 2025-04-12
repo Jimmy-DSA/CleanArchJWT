@@ -95,6 +95,7 @@ export class JSONUserRepo implements IUserRepository {
     try {
       await fs.access(filePath);
     } catch (error) {
+      console.log(error);
       if ((error as NodeJS.ErrnoException).code === "ENOENT") {
         await fs.writeFile(filePath, "[]", "utf-8");
       } else {

@@ -3,7 +3,7 @@
 import { loginAction } from "@/app/authActions";
 import React, { useActionState, useRef, useState } from "react";
 import { z } from "zod";
-import { config } from "../../config";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const initialState = {
   errors: "",
@@ -19,6 +19,9 @@ function Form() {
   );
   const [registerPending, setRegisterPending] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+
+  console.warn("state");
+  console.log(JSON.stringify(state));
 
   const [registerErrors, setRegisterErrors] = useState<{
     errors?: string;
@@ -147,7 +150,7 @@ function Form() {
         <input
           type="password"
           name="password"
-          defaultValue={mode === "login" ? state.username : undefined}
+          defaultValue={mode === "login" ? state.password : undefined}
           className="border p-2 w-full"
         />
       </div>
@@ -156,9 +159,23 @@ function Form() {
           disabled={pending || registerPending}
           className={`${
             pending || registerPending ? "bg-gray-300" : "bg-blue-500"
-          } w-full text-white p-2 rounded-md`}
+          } w-full text-white flex items-center h-10 justify-center p-2 rounded-md`}
         >
-          {mode === "login" ? "Login" : "Registrar"}
+          {pending || registerPending ? (
+            <CircularProgress
+              style={{
+                width: 20,
+                height: 20,
+                padding: 0,
+                margin: 0,
+                boxSizing: "border-box",
+              }}
+            />
+          ) : mode === "login" ? (
+            "Login"
+          ) : (
+            "Registrar"
+          )}
         </button>
       </div>
       <div className="block mt-1">
@@ -177,12 +194,13 @@ function Form() {
           {mode === "login" ? "Registrar" : "Login"}
         </a>
       </div>
-      {state.errors ||
-        (registerErrors?.errors && (
-          <span className="block text-red-500 text-sm mt-3 text-center">
-            {state.errors || registerErrors.errors}
-          </span>
-        ))}
+      {(state.errors || registerErrors?.errors) && (
+        <>
+          <div className="block text-red-500 text-sm mt-3 text-center">
+            {state.errors || registerErrors?.errors}
+          </div>
+        </>
+      )}
       {successMessage && (
         <span className="block text-green-500 text-sm mt-3 text-center">
           {successMessage}

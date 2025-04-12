@@ -3,7 +3,7 @@ import { NextResponse, NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
   if (request.url.includes("/api/")) {
-    console.log("Requisição GET para API, ignorando middleware");
+    console.log("GET request to /api/, avoiding middleware");
     return NextResponse.next();
   }
   if (request.method === "GET") {

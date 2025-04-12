@@ -83,26 +83,48 @@ export const loginAction = async (prevState: unknown, formData: FormData) => {
     };
   }
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API}/auth/login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ username, password }),
-  });
+  try {
+    //const delay = await new Promise((resolve) => setTimeout(resolve, 5000));
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API}/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    });
 
-  if (!response.ok) {
+    if (!response.ok) {
+      return {
+        errors: "password ou username incorretos",
+        username: username.toString(),
+        password: password.toString(),
+      };
+    } else {
+      const parsedResponse = await response.json();
+      console.log(parsedResponse);
+      const { token, tokenExpiresAt, refreshToken } = parsedResponse;
+      await saveSession(token, tokenExpiresAt, refreshToken);
+      redirect("/home");
+    }
+  } catch (e) {
+    console.log("erro ao fazer login:", e);
+    if (e instanceof Error) {
+      if (
+        typeof e === "object" &&
+        e !== null &&
+        "digest" in e &&
+        typeof e.digest === "string" &&
+        e.digest.startsWith("NEXT_REDIRECT")
+      ) {
+        throw e;
+      }
+    }
+
     return {
-      errors: "password ou username incorretos",
+      errors: "erro ao fazer login",
       username: username.toString(),
       password: password.toString(),
     };
-  } else {
-    const parsedResponse = await response.json();
-    console.log(parsedResponse);
-    const { token, tokenExpiresAt, refreshToken } = parsedResponse;
-    await saveSession(token, tokenExpiresAt, refreshToken);
-    redirect("/home");
   }
 };
 

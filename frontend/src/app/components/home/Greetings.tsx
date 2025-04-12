@@ -7,7 +7,6 @@ import { isTokenExpired } from "@/app/contexts/authContext";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import CheckIcon from "@mui/icons-material/Check";
-import { config } from "../../config";
 
 export default function Greetings() {
   const [userData, setUserData] = useState<{

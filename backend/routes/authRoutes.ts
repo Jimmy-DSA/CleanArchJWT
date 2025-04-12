@@ -7,10 +7,11 @@ import { Login } from "../useCases/login";
 import { RefreshTokenRepository } from "../repositories/refreshTokenRepository";
 import { DeleteUser } from "../useCases/deleteUser";
 import { RefreshToken } from "../useCases/refreshToken";
+import { PrismaUserRepo } from "../repositories/MySqlUserRepository";
 
 const router = Router();
 
-const userRepository = new JSONUserRepo();
+const userRepository = new PrismaUserRepo();
 const refreshTokenRepository = new RefreshTokenRepository();
 const loginUseCase = new Login(userRepository, refreshTokenRepository);
 const registerUseCase = new Register(userRepository);
